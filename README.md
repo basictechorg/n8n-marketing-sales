@@ -159,9 +159,9 @@ Report a concern via **Security → Report a vulnerability**. Full standard in [
 
 ---
 
-## 🙏 Credits
+## 🛠️ Engineered by basictechorg
 
-Curated and modernized from the open-source **n8n community**, whose templates are MIT-licensed. Original authors retain rights to their workflow logic; the curation, security engineering, and modernization are original work. Source licenses in [THIRD_PARTY_LICENSES/](THIRD_PARTY_LICENSES/) · details in [NOTICE](NOTICE).
+Every workflow here is security-hardened, modernized to the current AI/n8n stack, tested, and reorganized by **basictechorg**. Built on templates from the open-source n8n community (MIT-licensed) — original authors retain rights to their workflow logic. Source licenses in [THIRD_PARTY_LICENSES/](THIRD_PARTY_LICENSES/) · details in [NOTICE](NOTICE).
 
 ## 📄 License
 
