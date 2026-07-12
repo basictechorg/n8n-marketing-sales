@@ -1,0 +1,56 @@
+name: Validate & Secure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Least privilege by default; jobs opt in to what they need.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate JSON, node graphs & inline secret patterns
+        run: python3 scripts/validate.py
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Run gitleaks directly instead of the action wrapper, which mis-computes
+      # the commit range on initial pushes (<first-commit>^..HEAD fails).
+      # `git .` scans the entire history from root; `dir .` scans the working tree.
+      - name: Gitleaks — full history
+        run: |
+          docker run --rm -v "$PWD":/repo -w /repo \
+            zricethezav/gitleaks:latest git /repo \
+            --config /repo/.gitleaks.toml --redact -v --exit-code 2
+
+      - name: Gitleaks — working tree
+        run: |
+          docker run --rm -v "$PWD":/repo -w /repo \
+            zricethezav/gitleaks:latest dir /repo \
+            --config /repo/.gitleaks.toml --redact -v --exit-code 2
