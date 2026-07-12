@@ -1,0 +1,167 @@
+{
+  "id": "wfe52bd833ce4e",
+  "name": "TwitterWorkflow",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "disabled": true,
+      "position": [
+        400,
+        850
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Filter Tweet Data",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "Tweet",
+              "value": "={{$(\"n8n.io mentions\").item.json[\"text\"]}}"
+            },
+            {
+              "name": "Tweet ID",
+              "value": "={{$(\"n8n.io mentions\").item.json[\"id\"]}}"
+            },
+            {
+              "name": "Tweet URL",
+              "value": "=https://twitter.com/{{$(\"n8n.io mentions\").item.json[\"user\"][\"screen_name\"]}}/status/{{$(\"n8n.io mentions\").item.json[\"id_str\"]}}"
+            }
+          ]
+        },
+        "options": {},
+        "keepOnlySet": true
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Only get new tweets",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        910,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const staticData = getWorkflowStaticData('global');\nconst newTweetIds = items.map(item => item.json[\"Tweet ID\"]);\nconst oldTweetIds = staticData.oldTweetIds; \n\nif (!oldTweetIds) {\n  staticData.oldTweetIds = newTweetIds;\n  return items;\n}\n\n\nconst actualNewTweetIds = newTweetIds.filter((id) => !oldTweetIds.includes(id));\nconst actualNewTweets = items.filter((data) => actualNewTweetIds.includes(data.json['Tweet ID']));\nstaticData.oldTweetIds = [...actualNewTweetIds, ...oldTweetIds];\n\nreturn actualNewTweets;\n"
+      },
+      "typeVersion": 2
+    },
+    {
+      "name": "n8n.io mentions",
+      "type": "n8n-nodes-base.twitter",
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "operation": "search",
+        "searchText": "@n8n_io",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "twitterOAuth1Api": "Twitter Credentials"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "RocketChat",
+      "type": "n8n-nodes-base.rocketchat",
+      "position": [
+        1150,
+        300
+      ],
+      "parameters": {
+        "text": "=New Mention!: {{$(\"Filter Tweet Data\").item.json[\"Tweet\"]}}.\nSee it here: {{$(\"Only get new tweets\").item.json[\"Tweet URL\"]}}",
+        "channel": "general",
+        "options": {},
+        "jsonParameters": true
+      },
+      "credentials": {
+        "rocketchatApi": "Rocket Chat API"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        270,
+        300
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "unit": "minutes",
+              "value": 1
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "n8n.io mentions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n.io mentions": {
+      "main": [
+        [
+          {
+            "node": "Filter Tweet Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Tweet Data": {
+      "main": [
+        [
+          {
+            "node": "Only get new tweets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only get new tweets": {
+      "main": [
+        [
+          {
+            "node": "RocketChat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        []
+      ]
+    }
+  }
+}

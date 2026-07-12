@@ -1,0 +1,16 @@
+Marketing, Sales & Growth
+Copyright (c) 2026 basictechorg
+
+This repository curates, sanitizes, and modernizes n8n workflow templates from
+the open-source community, distributed under the MIT License by their original
+authors, whose rights are retained.
+
+Community sources include:
+  - The official n8n community workflow library (https://n8n.io/workflows)
+  - Zie619/n8n-workflows (MIT)
+  - enescingoz/awesome-n8n-templates (MIT)
+  - felipfr/awesome-n8n-workflows (MIT)
+
+The curation, quality auditing, security sanitization, modernization to current
+n8n nodes and AI models, categorization, and documentation are original work,
+released under the MIT License (see LICENSE).

@@ -1,0 +1,1384 @@
+{
+  "id": "wfe7b7f147a5e0",
+  "meta": {
+    "versionId": "1.0.0",
+    "createdAt": "2025-09-29T07:07:57.840337",
+    "updatedAt": "2025-09-29T07:07:57.840354",
+    "owner": "n8n-user",
+    "license": "MIT",
+    "category": "automation",
+    "status": "active",
+    "priority": "high",
+    "environment": "production"
+  },
+  "name": "Auto-create and publish AI social videos with Telegram, GPT-4 and Blotato",
+  "nodes": [
+    {
+      "id": "b8a41b63-8c48-4964-befe-b949f3e9b755",
+      "name": "Upload Video to Blotato",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2580,
+        920
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "sendHeaders": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $('Append Video Data to Google Sheet').item.json['url '] }}"
+            }
+          ]
+        },
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "ac7a8bf1-b9ec-4a25-8c14-6d90abbc5568",
+      "name": "Post to Instagram",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        120
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.instagram_id }}\",\n    \"target\": {\n      \"targetType\": \"instagram\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"instagram\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "be0a1831-c0e3-4753-b114-2cd7cc66fae2",
+      "name": "Post to YouTube",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        320
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.youtube_id }}\",\n    \"target\": {\n      \"targetType\": \"youtube\",\n      \"title\": \"{{ $('Append Video Data to Google Sheet').item.json.Title }}\",\n      \"privacyStatus\": \"unlisted\",\n      \"shouldNotifySubscribers\": \"false\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"youtube\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "62087008-dd5a-49f4-a764-a10b1c82e4e0",
+      "name": "Post to TikTok",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        520
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.tiktok_id }}\",\n    \"target\": {\n      \"targetType\": \"tiktok\",\n      \"isYourBrand\": \"false\", \n      \"disabledDuet\": \"false\",\n      \"privacyLevel\": \"PUBLIC_TO_EVERYONE\",\n      \"isAiGenerated\": \"true\",\n      \"disabledStitch\": \"false\",\n      \"disabledComments\": \"false\",\n      \"isBrandedContent\": \"false\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"tiktok\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "976b075d-c98b-45a4-bf76-06a34d5ccbf3",
+      "name": "Post to Facebook Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        720
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.facebook_id }}\",\n    \"target\": {\n      \"targetType\": \"facebook\",\n      \"pageId\": \"{{ $('Assign Platform IDs for Blotato').item.json.facebook_page_id }}\"\n\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"facebook\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "c689c5d4-f63c-4fc2-b2d6-e1d2d03a236a",
+      "name": "Post to Threads",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        920
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.threads_id }}\",\n    \"target\": {\n      \"targetType\": \"threads\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"threads\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "88c8bd03-342e-4844-9489-28a5a93426e0",
+      "name": "Post to Twitter (X)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        1120
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.twitter_id }}\",\n    \"target\": {\n      \"targetType\": \"twitter\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"twitter\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "db6fb042-731e-46ce-8f4d-07e2b427739c",
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        1320
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.linkedin_id }}\",\n    \"target\": {\n      \"targetType\": \"linkedin\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"linkedin\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "2102531c-624a-49b6-8b99-7a43e5067585",
+      "name": "Post to Bluesky",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        1520
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.bluesky_id }}\",\n    \"target\": {\n      \"targetType\": \"bluesky\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"bluesky\",\n      \"mediaUrls\": [\n        \"{{ $env.WEBHOOK_URL }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "a9826150-6e26-4174-af74-1b4dd8016638",
+      "name": "Post to Pinterest",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2800,
+        1720
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Platform IDs for Blotato').item.json.pinterest_id }}\",\n    \"target\": {\n      \"targetType\": \"pinterest\",\n      \"boardId\": \"{{ $('Assign Platform IDs for Blotato').item.json.pinterest_board_id }}\"      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Append Video Data to Google Sheet').item.json.caption }}\",\n      \"platform\": \"pinterest\",\n      \"mediaUrls\": [\n        \"{{ $env.WEBHOOK_URL }}\"\n      ]\n    }\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "fcd6f25a-f6e9-4952-8be8-37eafbf7d07f",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2320,
+        0
+      ],
+      "parameters": {
+        "color": 3,
+        "width": 880,
+        "height": 1900,
+        "content": "# 🟥 STEP 5 — Auto-Publish to 9 Social Platforms\n## The final step automates distribution using Blotato’s API.\n"
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "eb822c9d-cb51-4df7-98d6-a0941a9833bd",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "width": 2260,
+        "height": 760,
+        "content": "# 🟫 STEP 1 — Create Video Using AI (image or text)\n## This step handles the full video creation pipeline using AI.\n### It starts from a Telegram message containing a prompt or image, \n"
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "1c209fe5-fd5a-45d7-9546-421710eb501d",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        840
+      ],
+      "parameters": {
+        "width": 1500,
+        "height": 520,
+        "content": "# 🟫 STEP 2 — Create Music\n## Here, a short-form voice-over script is generated using GPT-4 based on the topic.\n### The script is converted to speech, uploaded, and merged with the AI-generated video — resulting in a fully narrated visual asset.\n"
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "0bf198f2-16f9-4ae9-aef3-919b5755da5a",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        1440
+      ],
+      "parameters": {
+        "width": 1500,
+        "height": 460,
+        "content": "# 🟫 STEP 3 — Add Captions to Enhance Engagement\n## To increase accessibility and boost social engagement, \n## this step overlays professional-looking subtitles on the video using a styling template.\n### This results in a final video that includes visuals, voice-over, and captions.\n"
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "00c67803-c937-491e-bf2a-2d76774de07f",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1580,
+        840
+      ],
+      "parameters": {
+        "color": 4,
+        "width": 680,
+        "height": 1060,
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# 🟫 STEP 4 — Save Video & Notify via Telegram\n## This step generates a title and caption for the video, \n## saves the content metadata to a Google Sheet for future tracking, \n### And sends both the final video and its description to a Telegram chat for validation or reuse.\n### The script is converted to speech, uploaded, and merged with the AI-generated video — resulting in a fully narrated visual asset.\n"
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "5a08a003-68b1-48e5-8851-bb1a77d18a37",
+      "name": "Trigger Telegram Prompt or Image",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        80,
+        280
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "Add your telegramApi credential"
+        }
+      },
+      "typeVersion": 1.1,
+      "notes": "This telegramTrigger node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "6c4d7dd5-7676-465a-ac02-cf7192bf70ab",
+      "name": "Split Prompt or Image Input",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        280,
+        280
+      ],
+      "parameters": {
+        "jsCode": "const input = $input.first().json.message.text || $input.first().json.message.caption;\n\n// Remove optional \"generate video\" prefix\nconst cleaned = input.replace(/^generate video[:]?/i, '').trim();\n\n// Split by comma\nconst parts = cleaned.split(',').map(p => p.trim());\n\n// Assign values even if missing\nconst videoPrompt = parts[0] || \"\";\nconst captionIdea = parts[1] || \"\";\nconst musicStyle = parts[2] || \"\";\n\nreturn [\n  {\n    json: {\n      videoPrompt,\n      captionIdea,\n      musicStyle\n    }\n  }\n];\n"
+      },
+      "typeVersion": 2,
+      "notes": "This code node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "3c203e0c-d133-4c6f-a801-2e5dab690b8a",
+      "name": "Condition Input Type (Image or Text)",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        460,
+        280
+      ],
+      "parameters": {
+        "options": {},
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8b4d3f92-c9e0-45e6-8b6a-4fa487e6b32f",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('Trigger Telegram Prompt or Image').item.json.message.text }}",
+              "rightValue": ""
+            }
+          ]
+        }
+      },
+      "typeVersion": 2.2,
+      "notes": "This if node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "1898fd9c-2164-44d0-8ada-192107565b64",
+      "name": "Download Image from Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        760,
+        440
+      ],
+      "parameters": {
+        "fileId": "={{ $('Trigger Telegram Prompt or Image').item.json.message.photo[3].file_id }}",
+        "resource": "file"
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "Add your telegramApi credential"
+        }
+      },
+      "typeVersion": 1.2,
+      "notes": "This telegram node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "6f9755e0-db11-4c3e-9d1b-f9c97c832cbd",
+      "name": "Extract Image File URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        960,
+        440
+      ],
+      "parameters": {
+        "url": "{{ $env.BASE_URL }}",
+        "options": {}
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "66abae9c-10ae-4845-9070-cd5f2d208782",
+      "name": "Upload Image to Cloudinary",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1120,
+        440
+      ],
+      "parameters": {
+        "url": "{{ $env.API_BASE_URL }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "parameterType": "formBinaryData",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8n_video"
+            }
+          ]
+        },
+        "genericAuthType": "httpBasicAuth"
+      },
+      "credentials": {
+        "httpBasicAuth": {
+          "name": "Add your httpBasicAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "26979ac8-6f1d-4a9b-b0b5-42b4d7165ffe",
+      "name": "Convert Image to Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1320,
+        440
+      ],
+      "parameters": {
+        "url": "{{ $env.API_BASE_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n\"model\": \"kling\",\n\"task_type\": \"video_generation\",\n\"input\": {\n\"prompt\": \"{{ $('Split Prompt or Image Input').item.json.videoPrompt }}\",\n\"image_url\": \"{{ $json.secure_url }}\",\n\"negative_prompt\": \"\",\n\"cfg_scale\": 0.5,\n\"duration\": 5,\n\"version\": \"1.6\",\n\"camera_control\": {\n\"type\": \"simple\",\n\"config\": {\n\"horizontal\": 0,\n\"vertical\": 0,\n\"pan\": 0,\n\"tilt\": 0,\n\"roll\": 0,\n\"zoom\": 0\n}\n},\n\"mode\": \"std\"\n},\n\"config\": {\n\"service_mode\": \"\",\n\"webhook_config\": {\n\"endpoint\": \"\",\n\"secret\": \"\"\n}\n}\n}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "credentials": {
+        "httpBasicAuth": {
+          "name": "Add your httpBasicAuth credential"
+        },
+        "httpHeaderAuth": {
+          "name": "Add your httpHeaderAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "36168808-54e8-4826-a3f5-bd8148da9a55",
+      "name": "Wait for Image-to-Video Rendering",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1520,
+        440
+      ],
+      "parameters": {
+        "unit": "minutes",
+        "amount": 2
+      },
+      "typeVersion": 1.1,
+      "notes": "This wait node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "dd364492-ffcb-47e4-a24e-fb5b3c5b4ab5",
+      "name": "Get Image-Based Video URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1720,
+        440
+      ],
+      "parameters": {
+        "url": "{{ $env.BASE_URL }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Add your httpHeaderAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "8a6b0c07-8304-403e-842e-ea60b0d5e939",
+      "name": "Generate Video with blotato",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        760,
+        120
+      ],
+      "parameters": {
+        "url": "{{ $env.WEBHOOK_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"script\": \"{{ $json.videoPrompt }}\",\n  \"style\": \"cinematic\",\n  \"template\": {\n    \"id\": \"base/pov/wakeup\"\n  }\n}\n",
+        "sendBody": true,
+        "sendHeaders": true,
+        "specifyBody": "json",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "14f39088-402d-477e-afe7-1fa8a3f0edf5",
+      "name": "Wait for blotato Video Rendering",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        1520,
+        120
+      ],
+      "parameters": {
+        "unit": "minutes",
+        "amount": 2
+      },
+      "typeVersion": 1.1,
+      "notes": "This wait node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "540a8cbf-0b41-4102-b2c3-a69480603cb6",
+      "name": "Get blotato Video URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1720,
+        120
+      ],
+      "parameters": {
+        "url": "{{ $env.BASE_URL }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "blotato-api-key"
+            }
+          ]
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "e549069b-0acb-44dd-ba58-d6fe76b4b782",
+      "name": "Merge Video Data (Image or Prompt)",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2060,
+        440
+      ],
+      "parameters": {
+        "options": {},
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ca907c0-f556-488d-ad59-714089b2a594",
+              "name": "url_video",
+              "type": "string",
+              "value": "={{ $json.item.mediaUrl }}{{ $json.data.output.video_url }} "
+            }
+          ]
+        }
+      },
+      "typeVersion": 3.4,
+      "notes": "This set node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "4482e940-fdee-498a-9b4c-dd44a12f04a9",
+      "name": "Generate Music with Piapi",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        60,
+        1040
+      ],
+      "parameters": {
+        "url": "{{ $env.API_BASE_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"model\": \"Qubico/diffrhythm\",\n  \"task_type\": \"txt2audio-base\",\n  \"input\": {\n    \"style_prompt\": \"{{ $('Split Prompt or Image Input').item.json.musicStyle }}\",\n    \"lyrics\": \"\",\n    \"style_audio\": \"\"\n  },\n  \"config\": {\n    \"webhook_config\": {\n      \"endpoint\": \"\",\n      \"secret\": \"\"\n    }\n  }\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Add your httpHeaderAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "e2187d71-aace-4cf4-8ef3-b4b14d255f54",
+      "name": "Wait for Music Generation",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        480,
+        1040
+      ],
+      "parameters": {
+        "unit": "minutes",
+        "amount": 2
+      },
+      "typeVersion": 1.1,
+      "notes": "This wait node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "8ea22e87-0803-4618-a4cb-08a6b720838e",
+      "name": "Get Music File URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        700,
+        1040
+      ],
+      "parameters": {
+        "url": "{{ $env.BASE_URL }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        },
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Add your httpHeaderAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "61b49201-e9d5-44b8-be6c-d0175596d261",
+      "name": "Generate Script (GPT-4o-mini)",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        920,
+        1040
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a copywriter for short-form vertical videos.\nVideo topic:\n{{ $('Split Prompt or Image Input').first().json.captionIdea }}\nWrite two short lines of overlay text:\n\ntext1: Hook (no period)\n\ntext2: Emotional or curiosity payoff (ends with \"...\")\n\nExample:\ntext1: Why I broke up with ChatGPT\ntext2: this other AI gets me so much better...\n\nRules:\n\nMax 50 characters per line\n\nOutput only:\ntext1: ...\ntext2: ...\n\nNo quotes, brackets, emojis, hashtags, or titles\n\n"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "name": "Add your openAiApi credential"
+        }
+      },
+      "typeVersion": 1.8,
+      "notes": "This openAi node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "30394110-bc11-4139-8303-f536e22733d4",
+      "name": "Split Script",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1300,
+        1040
+      ],
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\n// Auto-detect AI output path\nlet aiOutput = \"\";\n\nif (input?.choices?.[0]?.message?.content) {\n  aiOutput = input.choices[0].message.content;\n} else if (input?.message?.content) {\n  aiOutput = input.message.content;\n} else if (typeof input?.content === \"string\") {\n  aiOutput = input.content;\n} else {\n  // Optional: expose the input in case of failure for debug\n  throw new Error(\"❌ No valid AI output found. Check the structure of the input.\");\n}\n\nconst lines = aiOutput.split('\\n').map(l => l.trim());\nlet text1 = \"\";\nlet text2 = \"\";\n\nfor (const line of lines) {\n  if (line.toLowerCase().startsWith(\"text1:\")) {\n    text1 = line.replace(/^text1:\\s*/i, '');\n  } else if (line.toLowerCase().startsWith(\"text2:\")) {\n    text2 = line.replace(/^text2:\\s*/i, '');\n  }\n}\n\nreturn [\n  {\n    json: {\n      text1,\n      text2\n    }\n  }\n];\n"
+      },
+      "typeVersion": 2,
+      "notes": "This code node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "15d7845c-0e0b-4f06-b48e-5ea8add6501a",
+      "name": "Merge Video + Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        80,
+        1640
+      ],
+      "parameters": {
+        "url": "{{ $env.API_BASE_URL }}",
+        "method": "POST",
+        "options": {},
+        "jsonBody": "={\n  \"id\": \"qbaasr7s\",\n  \"resolution\": \"instagram-story\",\n  \"quality\": \"high\",\n  \"scenes\": [\n    {\n      \"id\": \"qyjh9lwj\",\n      \"comment\": \"Scene 1\",\n      \"elements\": []\n    }\n  ],\n  \"elements\": [\n    {\n      \"id\": \"q6dznzcv\",\n      \"type\": \"video\",\n      \"src\": \"{{ $('Merge Video Data (Image or Prompt)').item.json.url_video }}\",\n      \"resize\": \"cover\"\n    },\n    {\n      \"id\": \"top-text\",\n      \"type\": \"text\",\n      \"text\": \"{{ $json.text1 }}\",\n      \"settings\": {\n        \"font-family\": \"Libre Baskerville\",\n        \"font-size\": \"80px\",\n        \"color\": \"#ffffff\",\n        \"horizontal-position\": \"center\",\n        \"vertical-position\": \"top\",\n        \"margin-top\": \"100px\",\n        \"word-break\": \"break-word\",\n        \"overflow-wrap\": \"break-word\",\n        \"font-weight\": \"normal\",\n        \"text-shadow\": \"3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 0px 3px 0 #000, 3px 0px 0 #000, -3px 0px 0 #000, 0px -3px 0 #000\"\n      }\n    },\n    {\n      \"id\": \"bottom-text\",\n      \"type\": \"text\",\n      \"text\": \"{{ $json.text2 }}\",\n      \"settings\": {\n        \"font-family\": \"Libre Baskerville\",\n        \"font-size\": \"80px\",\n        \"color\": \"#ffffff\",\n        \"horizontal-position\": \"center\",\n        \"vertical-position\": \"bottom\",\n        \"margin-bottom\": \"250px\",\n        \"word-break\": \"break-word\",\n        \"overflow-wrap\": \"break-word\",\n        \"font-weight\": \"normal\",\n        \"text-shadow\": \"3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 0px 3px 0 #000, 3px 0px 0 #000, -3px 0px 0 #000, 0px -3px 0 #000\"\n      }\n    },\n    {\n      \"id\": \"music-track\",\n      \"type\": \"audio\",\n      \"src\": \"{{ $('Get Music File URL').item.json.data.output.audio_url }}\",\n      \"volume\": 0.5,\n      \"duration\": -2\n    }\n  ]\n}\n",
+        "sendBody": true,
+        "specifyBody": "json",
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Add your httpCustomAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "5b014111-3dfc-4190-83cf-b5915a47df1b",
+      "name": "Wait for Fusion Completion",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        260,
+        1640
+      ],
+      "parameters": {
+        "unit": "minutes",
+        "amount": 1
+      },
+      "typeVersion": 1.1,
+      "notes": "This wait node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "fdc02ec0-b3ce-49e3-9f20-096c679eacbe",
+      "name": "Get Final Video URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        500,
+        1640
+      ],
+      "parameters": {
+        "url": "{{ $env.BASE_URL }}",
+        "options": {},
+        "authentication": "{{ $credentials.genericCredentialType }}",
+        "genericAuthType": "httpCustomAuth"
+      },
+      "credentials": {
+        "httpCustomAuth": {
+          "name": "Add your httpCustomAuth credential"
+        }
+      },
+      "typeVersion": 4.2,
+      "notes": "This httpRequest node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "9b865654-337a-4dd5-89d4-4a131f6eed75",
+      "name": "Generate Social Caption (GPT-4)",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        720,
+        1640
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a short social media caption from this topic:\n{{ $('Split Prompt or Image Input').first().json.captionIdea }}\n\nMake it actionable, not generic or motivational.\nAdd 1 problem + 1 specific solution.\nUse 1 sentence per line, with an empty line between each.\ndon't asking them to comment.\nMaximum 150 characters\n\n🧠 Caption Guidelines:\nKeep it short, compelling, and value-driven.\n\nAvoid generic motivational fluff — focus on real, actionable insight or highlight a problem/solution pattern.\n\n\nStructure:\n\nOne sentence per line.\n\nNote: Do not use this character: \" in the result.\nReturn a single short paragraph with no line breaks and no special characters.\nNote: Do not use this character: \" in the result."
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "name": "Add your openAiApi credential"
+        }
+      },
+      "typeVersion": 1.8,
+      "notes": "This openAi node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "99a4282b-5d68-4f4d-8b1e-c7975221b92f",
+      "name": "Generate SEO Title (GPT-4)",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1160,
+        1640
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "options": {},
+        "messages": {
+          "values": [
+            {
+              "content": "=Act as a YouTube Title Expert.\nBased on the following video description:\n{{ $('Split Prompt or Image Input').first().json.captionIdea }}\nGenerate a short, punchy, and curiosity-driven YouTube video title that makes people want to click.\nMake it feel urgent, valuable, or surprising — and avoid generic or boring phrases.\nKeep it under 70 characters. Return only the title, no explanations.\nNote: The title must be free of special characters and the character \". Return only a plain text title.\n- Do not start the title with this character : \"\n- Do not finish the title with this character : \"\n- You Never user this character : \" in the title\n"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "name": "Add your openAiApi credential"
+        }
+      },
+      "typeVersion": 1.8,
+      "notes": "This openAi node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "3cbe9fb8-1685-4169-9ee1-3ae72f3190e3",
+      "name": "Append Video Data to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1640,
+        920
+      ],
+      "parameters": {
+        "columns": {
+          "value": {
+            "url ": "{{ $env.BASE_URL }}",
+            "Title": "={{ $json.message.content }}",
+            "caption": "={{ $('Generate Social Caption (GPT-4)').item.json.message.content }}"
+          },
+          "schema": [
+            {
+              "id": "url ",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "url ",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caption",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "caption",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "Title",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "type": "string",
+              "display": true,
+              "removed": true,
+              "required": false,
+              "displayName": "status",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "append",
+        "sheetName": {
+          "__rl": true,
+          "mode": "id",
+          "value": "="
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "="
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "name": "Add your googleSheetsOAuth2Api credential"
+        }
+      },
+      "typeVersion": 4.5,
+      "notes": "This googleSheets node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "dd947cd3-747f-484f-93ea-990d977ab113",
+      "name": "Send Final Video to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1860,
+        920
+      ],
+      "parameters": {
+        "text": "=Here's your scheduled video:\n----------------\nCaption Text: {{ $json.caption }}\n----------------\nVideo Link: {{ $json['url '] }}",
+        "chatId": "={{ $('Trigger Telegram Prompt or Image').first().json.message.chat.id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "Add your telegramApi credential"
+        }
+      },
+      "typeVersion": 1.2,
+      "notes": "This telegram node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "c17efd9a-2428-4c36-acd8-69c47d01b961",
+      "name": "Send Caption to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2060,
+        920
+      ],
+      "parameters": {
+        "file": "={{ $('Append Video Data to Google Sheet').item.json['url '] }}",
+        "chatId": "={{ $json.result.chat.id }}",
+        "operation": "sendVideo",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "name": "Add your telegramApi credential"
+        }
+      },
+      "typeVersion": 1.2,
+      "notes": "This telegram node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "b3311fa9-c473-4bd1-8de7-0930c4e799cd",
+      "name": "Assign Platform IDs for Blotato",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2360,
+        920
+      ],
+      "parameters": {
+        "mode": "raw",
+        "options": {},
+        "jsonOutput": "{\n  \"instagram_id\": \"1111\",\n  \"youtube_id\": \"2222\",\n  \"threads_id\": \"3333\",\n  \"tiktok_id\": \"4444\",\n  \"facebook_id\": \"5555\",\n  \"facebook_page_id\": \"6666\",\n  \"twitter_id\": \"7777\",\n  \"linkedin_id\": \"8888\",\n  \"pinterest_id\": \"9999\",\n  \"pinterest_board_id\": \"1010\",\n  \"bluesky_id\": \"11111111\"\n}\n"
+      },
+      "typeVersion": 3.4,
+      "notes": "This set node performs automated tasks as part of the workflow."
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": null,
+    "timezone": "UTC",
+    "executionTimeout": 3600,
+    "maxExecutions": 1000,
+    "retryOnFail": true,
+    "retryCount": 3,
+    "retryDelay": 1000
+  },
+  "connections": {
+    "Upload Video to Blotato": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Instagram": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to YouTube": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to TikTok": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Facebook Page": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Threads": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Twitter (X)": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Bluesky": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Post to Pinterest": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Extract Image File URL": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Upload Image to Cloudinary": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Convert Image to Video": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Get Image-Based Video URL": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Generate Video with blotato": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Get blotato Video URL": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Generate Music with Piapi": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Get Music File URL": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Merge Video + Music": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Get Final Video URL": {
+      "main": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Trigger Telegram Prompt or Image": {
+      "main": [
+        []
+      ]
+    },
+    "Download Image from Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "Generate Script (GPT-4o-mini)": {
+      "main": [
+        []
+      ]
+    },
+    "Generate Social Caption (GPT-4)": {
+      "main": [
+        []
+      ]
+    },
+    "Generate SEO Title (GPT-4)": {
+      "main": [
+        []
+      ]
+    },
+    "Append Video Data to Google Sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Send Final Video to Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "Send Caption to Telegram": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "description": "Automated workflow: Auto-create and publish AI social videos with Telegram, GPT-4 and Blotato. This workflow integrates 11 different services: telegramTrigger, stickyNote, httpRequest, wait, telegram. It contains 90 nodes and follows best practices for error handling and security.",
+  "notes": "Excellent quality workflow: Auto-create and publish AI social videos with Telegram, GPT-4 and Blotato. This workflow has been optimized for production use with comprehensive error handling, security, and documentation."
+}

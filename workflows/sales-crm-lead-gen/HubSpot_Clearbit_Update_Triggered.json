@@ -1,0 +1,129 @@
+{
+  "nodes": [
+    {
+      "name": "Clearbit",
+      "type": "n8n-nodes-base.clearbit",
+      "position": [
+        850,
+        300
+      ],
+      "parameters": {
+        "email": "={{$json[\"properties\"][\"email\"][\"value\"]}}",
+        "resource": "person",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "clearbitApi": {
+          "name": "Add your clearbitApi credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Hubspot Trigger",
+      "type": "n8n-nodes-base.hubspotTrigger",
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "eventsUi": {
+          "eventValues": [
+            {}
+          ]
+        },
+        "additionalFields": {}
+      },
+      "credentials": {
+        "hubspotDeveloperApi": {
+          "name": "Add your hubspotDeveloperApi credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Get Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "position": [
+        650,
+        300
+      ],
+      "parameters": {
+        "resource": "contact",
+        "contactId": "={{$json[\"contactId\"]}}",
+        "operation": "get",
+        "authentication": "oAuth2",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "name": "Add your hubspotOAuth2Api credential"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Update Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "position": [
+        1050,
+        300
+      ],
+      "parameters": {
+        "email": "={{$json[\"email\"]}}",
+        "resource": "contact",
+        "authentication": "oAuth2",
+        "additionalFields": {
+          "city": "={{$json[\"geo\"][\"city\"]}}",
+          "jobTitle": "={{$json[\"employment\"][\"title\"]}}",
+          "companyName": "={{$json[\"employment\"][\"name\"]}}"
+        }
+      },
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "name": "Add your hubspotOAuth2Api credential"
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Clearbit": {
+      "main": [
+        [
+          {
+            "node": "Update Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contact": {
+      "main": [
+        [
+          {
+            "node": "Clearbit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hubspot Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "wfffcb837cda1f"
+}

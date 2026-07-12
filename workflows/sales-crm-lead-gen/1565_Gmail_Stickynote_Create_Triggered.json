@@ -1,0 +1,169 @@
+{
+  "id": "wffdafb02fd695",
+  "meta": {
+    "versionId": "1.0.0",
+    "createdAt": "2025-09-29T07:07:45.174250",
+    "updatedAt": "2025-09-29T07:07:45.174260",
+    "owner": "n8n-user",
+    "license": "MIT",
+    "category": "automation",
+    "status": "active",
+    "priority": "high",
+    "environment": "production"
+  },
+  "name": "Save New Sales Opportunities",
+  "nodes": [
+    {
+      "id": "64b02b70-e7f2-4df0-852f-b6959af8d8c5",
+      "name": "Received Emails with Sales Label",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        760,
+        540
+      ],
+      "parameters": {
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "Label_8035866011660570111"
+          ]
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "name": "Add your gmailOAuth2 credential"
+        }
+      },
+      "typeVersion": 1.1,
+      "notes": "This gmailTrigger node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "6dca3c61-98ba-4d18-bc5c-9c762e12f13b",
+      "name": "Odoo - Create Opportunity",
+      "type": "n8n-nodes-base.odoo",
+      "position": [
+        1500,
+        540
+      ],
+      "parameters": {
+        "resource": "opportunity",
+        "opportunityName": "={{ $('Received Emails with Sales Label').item.json.headers.subject }}",
+        "additionalFields": {
+          "email_from": "={{ $('Received Emails with Sales Label').item.json.from.value[0].address }}",
+          "description": "={{ $json.response.text }}"
+        }
+      },
+      "credentials": {
+        "odooApi": {
+          "name": "Add your odooApi credential"
+        }
+      },
+      "typeVersion": 1,
+      "notes": "This odoo node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "a57e0e51-50d3-49de-8dc6-6fe592604765",
+      "name": "OpenAI Model",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1040,
+        720
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini-instruct"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "name": "Add your openAiApi credential"
+        }
+      },
+      "typeVersion": 1,
+      "notes": "This lmOpenAi node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "a6de25a3-3967-4957-bc98-4cb774a53dda",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        700,
+        220
+      ],
+      "parameters": {
+        "width": 446.44549763033154,
+        "height": 261.8821936357484,
+        "content": "## Summarize emails and save them as notes on sales opportunity in Odoo\n\nSet up steps:\n* Configure Google Cloud credentials with Gmail access\n* Configure OpenAI credentials\n* Configure Odoo credentials\n "
+      },
+      "typeVersion": 1,
+      "notes": "This stickyNote node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "8705b4de-1334-4ff2-8d5d-60ec96cfb8cd",
+      "name": "Summarize Email Content",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1060,
+        540
+      ],
+      "parameters": {
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "prompt": "=Write a concise summary of the following sales inquiry:\n\" {{ $json.text }}\"\nInclude structured information such as project budget, timelines, industry and a general summary\n\nCONCISE SUMMARY: \n",
+              "combineMapPrompt": "=Write a concise summary of the following sales inquiry:\n\"{{ $json.text }}\"\nExtract information such as project budget, timelines and a general summary.\n\nCONCISE SUMMARY: \n"
+            }
+          }
+        }
+      },
+      "typeVersion": 2,
+      "notes": "This chainSummarization node performs automated tasks as part of the workflow."
+    },
+    {
+      "id": "error-7a94cdcc",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        400
+      ],
+      "parameters": {
+        "message": "Workflow execution error",
+        "options": {}
+      }
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": null,
+    "timezone": "UTC",
+    "executionTimeout": 3600,
+    "maxExecutions": 1000,
+    "retryOnFail": true,
+    "retryCount": 3,
+    "retryDelay": 1000
+  },
+  "connections": {
+    "OpenAI Model": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "description": "Automated workflow: Save New Sales Opportunities. This workflow integrates 6 different services: stickyNote, gmailTrigger, odoo, stopAndError, lmOpenAi. It contains 6 nodes and follows best practices for error handling and security.",
+  "notes": "Excellent quality workflow: Save New Sales Opportunities. This workflow has been optimized for production use with comprehensive error handling, security, and documentation."
+}

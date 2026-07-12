@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — never commit these
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+**/secrets/
+
+# n8n runtime
+.n8n/
+*.sqlite
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/

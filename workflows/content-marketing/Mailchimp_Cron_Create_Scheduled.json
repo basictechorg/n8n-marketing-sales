@@ -1,0 +1,101 @@
+{
+  "id": "wf133efea9551f",
+  "name": "Create entry in Mailchimp from Airtable",
+  "nodes": [
+    {
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        450,
+        450
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {}
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        650,
+        450
+      ],
+      "parameters": {
+        "table": "Users",
+        "operation": "list",
+        "application": "=apprZs8g4tIGDUtqQ",
+        "additionalOptions": {
+          "fields": [
+            "Name",
+            "Email",
+            "Interest"
+          ]
+        }
+      },
+      "credentials": {
+        "airtableApi": "you@example.com"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "position": [
+        840,
+        450
+      ],
+      "parameters": {
+        "list": "777b2643d4",
+        "email": "={{$(\"Airtable\").item.json[\"fields\"][\"Email\"]}}",
+        "status": "subscribed",
+        "options": {
+          "tags": "Interest"
+        },
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "={{$(\"Airtable\").item.json[\"fields\"][\"Name\"]}}"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "mailchimpApi": "you@example.com"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable": {
+      "main": [
+        [
+          {
+            "node": "Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
