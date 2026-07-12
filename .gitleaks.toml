@@ -1,15 +1,24 @@
-# gitleaks allowlist — these are instructional placeholders, not real secrets
-title = "n8n-workflow-library gitleaks config"
+title = "n8n workflow library — secret scan config"
 [extend]
 useDefault = true
+
+[[rules]]
+id = "apify-api-token"
+description = "Apify API Token"
+regex = '''apify_api_[A-Za-z0-9]{36}'''
+[[rules]]
+id = "generic-bearer"
+description = "Bearer token in Authorization header"
+regex = '''(?i)authorization"\s*:\s*"bearer\s+[A-Za-z0-9._\-]{24,}'''
+
 [allowlist]
-description = "Placeholder keys shown in workflow templates for users to replace"
+description = "Instructional placeholders, not real secrets"
 regexes = [
+  '''YOUR_[A-Z_]+''',
+  '''Add your .* credential''',
+  '''INSERT YOUR KEY HERE''',
+  '''glpat-x+''',
   '''linkedinObject''',
   '''resourcekey=YOUR_RESOURCE_KEY''',
-  '''INSERT YOUR KEY HERE''',
-  '''BEGIN PRIVATE KEY-----\\n\[INSERT''',
-  '''YOUR_[A-Z_]+''',
-  '''glpat-x+''',
-  '''Add your .* credential''',
+  '''bearer\s+YOUR_''',
 ]
